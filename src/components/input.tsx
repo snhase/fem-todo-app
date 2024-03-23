@@ -1,13 +1,13 @@
-import { Task } from 'App';
+import { ToDo } from 'App';
 import React , { ChangeEvent, KeyboardEvent, useState }from 'react';
 
 interface Props {
   label: string;
-  setTask: (data: Task) => void;
+  setToDoList: (data: ToDo[]) => void;
 }
 
 
-export function Input({label, setTask}: Props) {
+export function Input({label, setToDoList}: Props) {
   const id = label.replace(/ /gm, "");
   const [value, setValue] = useState("");
 
@@ -18,7 +18,7 @@ export function Input({label, setTask}: Props) {
 
   const handleOnKeyDown = (event: KeyboardEvent<HTMLElement> ) => {
     if(event.key === "Enter"){
-      let taskList:Task[] = sessionStorage.getItem("toDoList")?JSON.parse(sessionStorage.getItem("toDoList")):[];
+      let taskList:ToDo[] = sessionStorage.getItem("toDoList")?JSON.parse(sessionStorage.getItem("toDoList")):[];
       let taskId = taskList.length+1;
       taskList.push({
         id:taskId,
@@ -26,15 +26,16 @@ export function Input({label, setTask}: Props) {
         completed:false,
       });
       sessionStorage.setItem("toDoList", JSON.stringify(taskList));
+      setToDoList(taskList);
       setValue("")
     }
   }
   
   return (
-    <div className="mx-auto relative block w-1/2">
+    <div className="mx-auto relative block w-1/3">
         <span className="absolute inset-y-0 left-0 flex items-center p-5">
           <svg className ="stroke-slate-200" height="50" width="50" xmlns="http://www.w3.org/2000/svg">
-            <circle r="10" cx="20" cy="25" stroke-width="2" fill="none"/>
+            <circle r="10" cx="20" cy="25" strokeWidth="2" fill="none"/>
          </svg>
         </span>
         <input
