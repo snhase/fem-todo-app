@@ -18,6 +18,9 @@ export function Input({label, setToDoList}: Props) {
 
   const handleOnKeyDown = (event: KeyboardEvent<HTMLElement> ) => {
     if(event.key === "Enter"){
+      if(value === ""){
+        return;
+      }
       let taskList:ToDo[] = sessionStorage.getItem("toDoList")?JSON.parse(sessionStorage.getItem("toDoList")):[];
       let taskId = taskList.length+1;
       taskList.push({
@@ -33,10 +36,8 @@ export function Input({label, setToDoList}: Props) {
   
   return (
     <div className="mx-auto relative block w-1/3">
-        <span className="absolute inset-y-0 left-0 flex items-center p-5">
-          <svg className ="stroke-slate-200" height="50" width="50" xmlns="http://www.w3.org/2000/svg">
-            <circle r="10" cx="20" cy="25" strokeWidth="2" fill="none"/>
-         </svg>
+        <span className="absolute inset-y-0 left-2 flex items-center p-5">
+          <div className="h-6 w-6 bg-white rounded-full border-2 border-slate-200"></div>
         </span>
         <input
           id={id}
