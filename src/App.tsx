@@ -32,6 +32,7 @@ function App() {
         <div className="mx-auto mt-4 xl:mt-4">
         <Input
           label="Create a new todo..."
+          toDoList={todoList}
           setToDoList={setToDoList}
            ></Input>
         </div>
@@ -56,7 +57,7 @@ function App() {
             }
             <div className="relative">
             <div className="sticky">
-              <div className="flex justify-between p-5 text-slate-500">
+              <div className="flex justify-between p-5 text-[hsl(236,9%,61%)]">
                 <div>{todoList.filter(item=>!item.completed).length} items left</div>
                 <div className="flex capitalize">
                   <div className="px-2 hover:font-bold hover:cursor-pointer hover:text-[hsla(220,98%,61%,1)]">all</div>

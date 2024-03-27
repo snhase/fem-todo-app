@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ToDo } from 'App';
 import CheckIcon from '../assets/images/icon-check.svg'
 
 interface Props {
     task?:ToDo,
     toDoList?:ToDo[],
-    editTask?: (value: string) => void;
     setToDoList?: (value: ToDo[]) => void;
 }
 
 const Task = ({ task, toDoList, setToDoList}:Props) => {
+    const [showDelete, setShowDelete] = useState(false);
 
     const markToDoComplete = () => {
         toDoList.forEach(t => {
@@ -18,7 +18,13 @@ const Task = ({ task, toDoList, setToDoList}:Props) => {
             }
         })
         setToDoList([...toDoList]);
-        sessionStorage.setItem("toDoList",JSON.stringify(toDoList))
+        sessionStorage.setItem("toDoList",JSON.stringify(toDoList));
+    }
+
+    const deleteToDo = () => {
+        let updated:ToDo[] = toDoList.filter(t=> t.id !== task.id);
+        setToDoList(updated);
+        sessionStorage.setItem("toDoList",JSON.stringify(updated));
     }
 
     return(
@@ -39,15 +45,30 @@ const Task = ({ task, toDoList, setToDoList}:Props) => {
                     </div>
                 </div>
             }
-            
         </span>
         <div 
             className={
                 task.completed?
-                ["line-through","block w-full border-b-2 border-slate-200 py-5 pl-20 text-xl"].join(" ") 
-                :"block w-full border-b-2 border-slate-200 py-5 pl-20 text-xl hover:cursor-pointer"
+                "line-through block w-full border-b-2 border-slate-200 py-5 pl-20 text-[hsl(233,11%,84%)] first-letter:uppercase hover:cursor-pointer" 
+                :"block w-full border-b-2 border-slate-200 py-5 pl-20 text-[hsl(235,19%,35%)] first-letter:uppercase hover:cursor-pointer"
             }
-            >{task.content}</div>
+            onMouseEnter={()=>{setShowDelete(true)}}
+            onMouseLeave={()=>{setShowDelete(false)}}
+            >
+                <span>{task.content}</span>
+                {
+                    showDelete?
+                    <span
+                        className="hover:cursor-pointer"
+                        onClick={deleteToDo}
+                        >
+                        <svg className="absolute inset-y-0 my-auto right-5 fill-[#494C6B] hover:fill-red-600" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                            <path fillRule="evenodd" d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"/>
+                        </svg>
+                    </span>
+                    :<></>
+                }
+            </div>
     </div>
     )
 }

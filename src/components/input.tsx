@@ -3,11 +3,12 @@ import React , { ChangeEvent, KeyboardEvent, useState }from 'react';
 
 interface Props {
   label: string;
+  toDoList:ToDo[];
   setToDoList: (data: ToDo[]) => void;
 }
 
 
-export function Input({label, setToDoList}: Props) {
+export function Input({label, toDoList, setToDoList}: Props) {
   const id = label.replace(/ /gm, "");
   const [value, setValue] = useState("");
 
@@ -21,15 +22,15 @@ export function Input({label, setToDoList}: Props) {
       if(value === ""){
         return;
       }
-      let taskList:ToDo[] = sessionStorage.getItem("toDoList")?JSON.parse(sessionStorage.getItem("toDoList")):[];
-      let taskId = taskList.length+1;
-      taskList.push({
+      //calculate id based on last added taskId
+      let taskId = toDoList.length>0? toDoList[toDoList.length-1].id+1:1
+      toDoList.push({
         id:taskId,
         content:value,
         completed:false,
       });
-      sessionStorage.setItem("toDoList", JSON.stringify(taskList));
-      setToDoList(taskList);
+      sessionStorage.setItem("toDoList", JSON.stringify(toDoList));
+      setToDoList([...toDoList]);
       setValue("")
     }
   }
@@ -41,7 +42,7 @@ export function Input({label, setToDoList}: Props) {
         </span>
         <input
           id={id}
-          className="placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-4 pl-20 pr-5 shadow-sm text-xl focus:outline-none"
+          className="block bg-white w-full border border-slate-300 rounded-md py-4 pl-20 pr-5 shadow-sm text-[hsl(235,19%,35%)] focus:outline-none placeholder:text-[hsl(236,9%,61%)]"
           placeholder={label}
           value={value}
           autoComplete="off"
