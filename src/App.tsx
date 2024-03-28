@@ -1,6 +1,6 @@
 import { Input } from './components/input.tsx';
 import { Card } from './components/card.tsx';
-import Task from './components/Task.tsx'
+import TaskList from './components/TaskList.tsx'
 import React, { useEffect, useState } from 'react'
 
 export interface ToDo {
@@ -11,8 +11,9 @@ export interface ToDo {
 
 function App() {
 
+  const [filterType, setFilterType] = useState("all");
   const [todoList, setToDoList] = useState<ToDo[]>(null);
-  const [todo, setToDo] = useState<ToDo>(null);
+  const filterClassNames = "px-2 hover:cursor-pointer";
 
   useEffect(()=>{
     if(!todoList){
@@ -42,29 +43,43 @@ function App() {
           {
             todoList && todoList.length>0?
             <Card>
-            {
-              todoList.map(task =>{
-                return(
-                  <div key={String(task.id)}>
-                    <Task
-                    task={task}
-                    toDoList={todoList}
-                    setToDoList={setToDoList}
-                    />
-                  </div>
-                );
-              })
-            }
+            <TaskList
+              toDoList={todoList}
+              setToDoList={setToDoList}
+              filterType={filterType}
+              />
             <div className="relative">
             <div className="sticky">
               <div className="flex justify-between p-5 text-[hsl(236,9%,61%)]">
                 <div>{todoList.filter(item=>!item.completed).length} items left</div>
                 <div className="flex capitalize">
-                  <div className="px-2 hover:font-bold hover:cursor-pointer hover:text-[hsla(220,98%,61%,1)]">all</div>
-                  <div className="px-2 hover:font-bold hover:cursor-pointer hover:text-[hsla(220,98%,61%,1)]">active</div>
-                  <div className="px-2 hover:font-bold hover:cursor-pointer hover:text-[hsla(220,98%,61%,1)]">completed</div>
+                  <div 
+                    className=
+                    {filterType === "all"?
+                    ["text-[hsla(220,98%,61%,1)]",filterClassNames].join(" ")
+                    :
+                    ["hover:text-[hsl(235,19%,35%)]", filterClassNames].join(" ")
+                    }
+                    onClick={()=> setFilterType("all")}
+                    >all</div>
+                  <div 
+                    className={filterType === "active"?
+                    ["text-[hsla(220,98%,61%,1)]",filterClassNames].join(" ")
+                    :
+                    ["hover:text-[hsl(235,19%,35%)]", filterClassNames].join(" ")
+                    }
+                    onClick={()=> setFilterType("active")}
+                  >active</div>
+                  <div 
+                    className={filterType === "completed"?
+                    ["text-[hsla(220,98%,61%,1)]",filterClassNames].join(" ")
+                    :
+                    ["hover:text-[hsl(235,19%,35%)]", filterClassNames].join(" ")
+                    }
+                    onClick={()=> setFilterType("completed")}
+                    >completed</div>
                   </div>
-                <div className="capitalize hover:font-semibold hover:cursor-pointer">clear completed</div>
+                <div className="capitalize hover:cursor-pointer hover:text-[hsl(235,19%,35%)]">clear completed</div>
               </div>
             </div>
             </div>
