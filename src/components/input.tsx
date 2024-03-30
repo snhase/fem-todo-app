@@ -29,14 +29,14 @@ export function Input({label, toDoList, setToDoList}: Props) {
         content:value,
         completed:false,
       });
-      sessionStorage.setItem("toDoList", JSON.stringify(toDoList));
+      localStorage.setItem("toDoList", JSON.stringify(toDoList));
       setToDoList([...toDoList]);
       setValue("")
     }
   }
   
   return (
-    <div className="mx-auto relative block w-1/3">
+    <div className="w-4/5 md:w-1/2 lg:w-1/3 mx-auto relative block">
         <span className="absolute inset-y-0 left-2 flex items-center p-5">
           <div className="h-6 w-6 bg-white rounded-full border-2 border-slate-200"></div>
         </span>

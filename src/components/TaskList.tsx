@@ -31,13 +31,13 @@ const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
             }
         })
         setToDoList([...toDoList]);
-        sessionStorage.setItem("toDoList",JSON.stringify(toDoList));
+        localStorage.setItem("toDoList",JSON.stringify(toDoList));
     }
 
     const deleteToDo = (task:ToDo) => {
         let updated:ToDo[] = toDoList.filter(t=> t.id !== task.id);
         setToDoList(updated);
-        sessionStorage.setItem("toDoList",JSON.stringify(updated));
+        localStorage.setItem("toDoList",JSON.stringify(updated));
     }
 
     return(
