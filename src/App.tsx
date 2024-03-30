@@ -24,6 +24,12 @@ function App() {
     
   },[todoList]);
 
+  const clearCompleted = () => {
+    let updated:ToDo[] = todoList.filter(todo => !todo.completed);
+    setToDoList(updated);
+    localStorage.setItem("toDoList",JSON.stringify(updated));
+}
+
   return (
     <div className="mx-auto h-screen">
       <header className="h-1/3 bg-[url('./assets/images/bg-desktop-light.jpg')] bg-cover">
@@ -59,7 +65,10 @@ function App() {
                       setFilterType={setFilterType}
                     />
                 </div>
-                <div className="text-right capitalize hover:cursor-pointer hover:text-[hsl(235,19%,35%)]">clear completed</div>
+                <div 
+                  className="text-right capitalize hover:cursor-pointer hover:text-[hsl(235,19%,35%)]"
+                  onClick={clearCompleted}
+                  >clear completed</div>
               </div>
             </div>
             </div>
