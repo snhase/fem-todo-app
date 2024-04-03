@@ -21,7 +21,7 @@ const filterTodo = (todoList:ToDo[], filterType: string) => {
 }
 
 const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
-    const [showDelete, setShowDelete] = useState(false);
+    const [showDelete, setShowDelete] = useState(null);
     const visibleToDo = useMemo(()=> filterTodo(toDoList,filterType),[toDoList,filterType]);
 
     const markToDoComplete = (task:ToDo) => {
@@ -48,7 +48,7 @@ const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
             return(
                 <div
                 key={String(task.id)}
-                className="relative block">
+                className="relative block dark:bg-veryDarkDesaturatedBlue">
                     <span 
                         className="absolute inset-y-0 left-2 flex items-center p-5"
                         onClick={()=>{
@@ -62,7 +62,7 @@ const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
                             </div>
                             :
                             <div className="p-0.5 hover:cursor-pointer hover:bg-gradient-to-br from-[hsl(192,100%,67%)] to-[hsl(280,87%,65%)] rounded-full">
-                                <div className='h-6 w-6 bg-white rounded-full border-2 border-slate-200 hover:border-0'>
+                                <div className='h-6 w-6 bg-white dark:bg-veryDarkDesaturatedBlue rounded-full border-2 border-slate-200 dark:border-veryDarkGrayishBlue2 hover:border-0'>
                                 </div>
                             </div>
                         }
@@ -70,15 +70,16 @@ const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
                     <div 
                         className={
                             task.completed?
-                            "line-through block w-full border-b-2 border-slate-200 py-5 pl-20 text-[hsl(233,11%,84%)] first-letter:uppercase hover:cursor-pointer" 
-                            :"block w-full border-b-2 border-slate-200 py-5 pl-20 text-[hsl(235,19%,35%)] first-letter:uppercase hover:cursor-pointer"
+                            "line-through block w-full border-b-2 border-slate-200 dark:border-veryDarkGrayishBlue2 py-5 pl-20 text-lightGrayishBlue dark:text-darkGrayishBlue first-letter:uppercase hover:cursor-pointer" 
+                            :"block w-full border-b-2 border-slate-200 dark:border-veryDarkGrayishBlue2 py-5 pl-20 text-veryDarkGrayishBlue dark:text-lightGrayishBlue first-letter:uppercase hover:cursor-pointer"
                         }
-                        onMouseEnter={()=>{setShowDelete(true)}}
-                        onMouseLeave={()=>{setShowDelete(false)}}
+                        onMouseEnter={()=>{setShowDelete(task.id)}}
+                        onMouseLeave={()=>{setShowDelete(null)}}
                         >
-                            <span>{task.content}</span>
+                            <span
+                            >{task.content}</span>
                             {
-                                showDelete?
+                                showDelete === task.id?
                                 <span
                                     className="hover:cursor-pointer"
                                     onClick={()=>{deleteToDo(task)}}
