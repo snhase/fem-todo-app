@@ -1,7 +1,7 @@
 import { Input } from './components/input.tsx';
 import { Card } from './components/card.tsx';
 import TaskList from './components/TaskList.tsx'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, KeyboardEvent } from 'react'
 import IconMoon from './assets/images/icon-moon.svg'
 import IconSun from './assets/images/icon-sun.svg'
 import TaskFilter from './components/TaskFilter.tsx';
@@ -41,7 +41,9 @@ function App() {
     if(!todoList){
       let taskList:ToDo[] = localStorage.getItem("toDoList")?JSON.parse(localStorage.getItem("toDoList")):[];
       setToDoList(taskList);
-    }    
+    } else{
+      localStorage.setItem("toDoList", JSON.stringify(todoList));
+    }   
   },[todoList]);
 
   const clearCompleted = () => {
@@ -53,6 +55,31 @@ function App() {
   const toggleThemeSwitch = () =>{
     setTheme(theme === "dark"?"light":"dark");
     localStorage.theme = (theme === "dark"?"light":"dark");
+  }
+
+  const handleOnKeyDown = (value: string, event: KeyboardEvent<HTMLElement> , callback:()=>void) => {
+    if(event.key === "Enter"){
+      if(value === ""){
+        return;
+      }
+      //calculate id based on last added taskId
+      let taskId = 0;
+      if(todoList.length>0){
+        todoList.forEach(item=>{
+          taskId = Math.max(taskId,item.id);
+        })
+        taskId++;
+      }
+      setToDoList([
+        ...todoList,
+        {
+          id:taskId,
+          content:value,
+          completed:false,
+        }
+      ]);
+      callback();
+    }
   }
 
   return (
@@ -80,8 +107,7 @@ function App() {
         <div className="mx-auto mt-8">
         <Input
           label="Create a new todo..."
-          toDoList={todoList}
-          setToDoList={setToDoList}
+          handleOnKeyDown={handleOnKeyDown}
            ></Input>
         </div>
         </div>
@@ -118,6 +144,14 @@ function App() {
             <></>
           }
         </div>
+        {
+          todoList && todoList.length>1?
+          <div className='hidden lg:block mt-10 p-5 text-center text-darkGrayishBlue'>
+            Drag and drop to reorder list
+          </div>
+          :
+          <></>
+        }
         <div className="md:hidden my-5 py-5 text-darkGrayishBlue">
           <Card>
           <TaskFilter

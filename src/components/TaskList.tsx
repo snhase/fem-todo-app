@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, DragEvent, useEffect} from 'react'
 import { ToDo } from 'App';
 import CheckIcon from '../assets/images/icon-check.svg'
 
@@ -22,15 +22,20 @@ const filterTodo = (todoList:ToDo[], filterType: string) => {
 
 const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
     const [showDelete, setShowDelete] = useState(null);
-    const visibleToDo = useMemo(()=> filterTodo(toDoList,filterType),[toDoList,filterType]);
+    const [dragActive, setDragActive] = useState(false);
+    const [dragFrom, setDragFrom] = useState(null);
+
+    const visibleToDo = useMemo(() => filterTodo(toDoList,filterType),[toDoList,filterType]);
 
     const markToDoComplete = (task:ToDo) => {
-        toDoList.forEach(t => {
-            if(t.id === task.id){
-                t.completed= !t.completed;
-            }
-        })
-        setToDoList([...toDoList]);
+        task.completed=!task.completed;
+        let index = toDoList.findIndex(t => t.id === task.id);
+        let rest = toDoList.filter(t => t.id !== task.id);
+        setToDoList([
+            ...rest.slice(0,index),
+            task,
+            ...rest.slice(index)
+        ]);
         localStorage.setItem("toDoList",JSON.stringify(toDoList));
     }
 
@@ -40,11 +45,40 @@ const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
         localStorage.setItem("toDoList",JSON.stringify(updated));
     }
 
+    const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
+        setDragActive(true);
+        let dragFrom = Number(event.currentTarget?.dataset.idx)
+        setDragFrom(dragFrom);
+    }
+
+    const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        const newDragIndex = Number(event.currentTarget?.dataset.idx);
+        const newDragPosition = toDoList.findIndex(todo => todo.id === visibleToDo[newDragIndex].id)
+        if(dragFrom !== newDragPosition){
+            let updatedList = toDoList;
+            const taskDragged = visibleToDo[dragFrom]
+            const rest = updatedList.filter((item:ToDo)=> item.id !== taskDragged.id)
+            updatedList = [
+                ...rest.slice(0,newDragPosition),
+                taskDragged,
+                ...rest.slice(newDragPosition)
+            ]
+            setToDoList(updatedList);
+            localStorage.setItem("toDoList", JSON.stringify(updatedList));
+            setDragActive(false);
+            setDragFrom(null);
+        } else{
+            setDragActive(false);
+            setDragFrom(null);
+        }
+    }
+
     return(
         <>
         {
             visibleToDo && visibleToDo.length>0?
-            visibleToDo.map(task =>{
+            visibleToDo.map((task:ToDo, idx:number) =>{
             return(
                 <div
                 key={String(task.id)}
@@ -67,14 +101,21 @@ const TaskList = ({ filterType, toDoList, setToDoList}:Props) => {
                             </div>
                         }
                     </span>
-                    <div 
-                        className={
-                            task.completed?
-                            "line-through block w-full border-b-2 border-slate-200 dark:border-veryDarkGrayishBlue2 py-5 pl-20 text-lightGrayishBlue dark:text-darkGrayishBlue first-letter:uppercase hover:cursor-pointer" 
-                            :"block w-full border-b-2 border-slate-200 dark:border-veryDarkGrayishBlue2 py-5 pl-20 text-veryDarkGrayishBlue dark:text-lightGrayishBlue first-letter:uppercase hover:cursor-pointer"
-                        }
+                    <div
+                        className={`
+                        "block w-full border-b-2 border-slate-200 dark:border-veryDarkGrayishBlue2 py-5 pl-20 first-letter:uppercase"
+                        ${task.completed? "line-through text-lightGrayishBlue dark:text-darkGrayishBlue":"text-veryDarkGrayishBlue dark:text-lightGrayishBlue"}
+                        ${ dragActive && (dragFrom === Number(idx) || dragFrom !== Number(idx)) ?"cursor-grabbing":"hover:cursor-pointer"}`}
+                        data-idx={idx}
                         onMouseEnter={()=>{setShowDelete(task.id)}}
                         onMouseLeave={()=>{setShowDelete(null)}}
+                        draggable="true"
+                        onDragStart={handleDragStart}
+                        onDragOver={(event => {
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = "move";
+                        })}
+                        onDrop={handleDrop}
                         >
                             <span
                             >{task.content}</span>

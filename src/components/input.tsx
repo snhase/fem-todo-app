@@ -3,36 +3,16 @@ import React , { ChangeEvent, KeyboardEvent, useState }from 'react';
 
 interface Props {
   label: string;
-  toDoList:ToDo[];
-  setToDoList: (data: ToDo[]) => void;
+  handleOnKeyDown: (value: string, event:KeyboardEvent, callback: () => void) => void;
 }
 
 
-export function Input({label, toDoList, setToDoList}: Props) {
+export function Input({label, handleOnKeyDown}: Props) {
   const id = label.replace(/ /gm, "");
   const [value, setValue] = useState("");
 
-
   const handleOnChange = (event : ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
-  }
-
-  const handleOnKeyDown = (event: KeyboardEvent<HTMLElement> ) => {
-    if(event.key === "Enter"){
-      if(value === ""){
-        return;
-      }
-      //calculate id based on last added taskId
-      let taskId = toDoList.length>0? toDoList[toDoList.length-1].id+1:1
-      toDoList.push({
-        id:taskId,
-        content:value,
-        completed:false,
-      });
-      localStorage.setItem("toDoList", JSON.stringify(toDoList));
-      setToDoList([...toDoList]);
-      setValue("")
-    }
   }
   
   return (
@@ -47,7 +27,11 @@ export function Input({label, toDoList, setToDoList}: Props) {
           value={value}
           autoComplete="off"
           onChange={handleOnChange}
-          onKeyDown={handleOnKeyDown}
+          onKeyDown={(event)=>{
+            handleOnKeyDown(value, event, () => {
+              setValue("")
+            })
+          }}
         />
     </div>
   );
