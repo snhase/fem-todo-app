@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/fem-todo-app/static/css/main.506f0857.css",
+    "main.js": "/fem-todo-app/static/js/main.a27c31bc.js",
+    "static/media/bg-desktop-light.jpg": "/fem-todo-app/static/media/bg-desktop-light.3508d620efd5a52bb4ce.jpg",
+    "static/media/bg-desktop-dark.jpg": "/fem-todo-app/static/media/bg-desktop-dark.73e47dbb723ebc772ef0.jpg",
+    "index.html": "/fem-todo-app/index.html",
+    "static/media/icon-sun.svg": "/fem-todo-app/static/media/icon-sun.910b1f9a23741afc341e95653a51f14f.svg",
+    "static/media/icon-moon.svg": "/fem-todo-app/static/media/icon-moon.6c03114b495d05f4380b3c544d9afe2a.svg",
+    "static/media/icon-check.svg": "/fem-todo-app/static/media/icon-check.a8fb15d0278c8e312df5fc8364fef863.svg",
+    "main.506f0857.css.map": "/fem-todo-app/static/css/main.506f0857.css.map",
+    "main.a27c31bc.js.map": "/fem-todo-app/static/js/main.a27c31bc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.506f0857.css",
+    "static/js/main.a27c31bc.js"
+  ]
+}
