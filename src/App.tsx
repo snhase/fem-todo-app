@@ -5,7 +5,7 @@ import React, { useEffect, useState, KeyboardEvent } from "react";
 import IconMoon from "./assets/images/icon-moon.svg";
 import IconSun from "./assets/images/icon-sun.svg";
 import TaskFilter from "./components/TaskFilter.tsx";
-import { getTodoList } from "./utils/requests.tsx";
+import { deleteTodo, getTodoList, manageTodo } from "./utils/requests.tsx";
 
 export interface ToDo {
   id?: number;
@@ -45,14 +45,20 @@ function App() {
   useEffect(() => {
     if (!todoList) {
       //get todoList from db
-      getTodoList("http://localhost:8000/api/tasks", setToDoList);
+      getTodoList("/api/tasks", setToDoList);
     }
   }, [todoList]);
 
   const clearCompleted = () => {
-    let updated: ToDo[] = todoList.filter((todo) => !todo.completed);
-    setToDoList(updated);
-    localStorage.setItem("toDoList", JSON.stringify(updated));
+    let notCompleted: ToDo[] = todoList.filter((todo) => !todo.completed);
+    let idsToDelete: string = todoList
+      .filter((todo) => todo.completed)
+      .map((item) => item.id)
+      .toString();
+    let apiPath: string = `/api/task/${idsToDelete}`;
+    deleteTodo(apiPath, () => {
+      setToDoList(notCompleted);
+    });
   };
 
   const toggleThemeSwitch = () => {
@@ -70,21 +76,22 @@ function App() {
         return;
       }
       //calculate id based on last added taskId
-      let taskId = 0;
-      if (todoList.length > 0) {
+      let id = 0;
+      if (todoList && todoList.length > 0) {
         todoList.forEach((item) => {
-          taskId = Math.max(taskId, item.id);
+          id = Math.max(id, item.id);
         });
-        taskId++;
+        id++;
       }
-      setToDoList([
-        ...todoList,
-        {
-          id: taskId,
-          content: value,
-          completed: false,
-        },
-      ]);
+      let newTask: ToDo = {
+        id,
+        content: value,
+        completed: false,
+      };
+      manageTodo("/api/task", "POST", JSON.stringify(newTask), () => {
+        setToDoList([...todoList, newTask]);
+      });
+      //clear input after submit;
       callback();
     }
   };
