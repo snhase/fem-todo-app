@@ -33,6 +33,7 @@ const TaskList = ({ filterType, toDoList, setToDoList }: Props) => {
 
   const markToDoComplete = (task: ToDo) => {
     task.completed = !task.completed;
+    delete task["_id"];
     let index: number = toDoList.findIndex((t) => t.id === task.id);
     let rest: ToDo[] = toDoList.filter((t) => t.id !== task.id);
     let apiPath: string = `/api/task/${task.id}`;
